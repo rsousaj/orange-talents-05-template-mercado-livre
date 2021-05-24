@@ -43,36 +43,6 @@ public class ErroRequisicaoHandler extends ResponseEntityExceptionHandler {
 	}
 }
 
-//@RestControllerAdvice
-//public class ErroRequisicaoHandler {
-//	
-//	private MessageSource messageSource;
-//
-//	public ErroRequisicaoHandler(MessageSource messageSource) {
-//		super();
-//		this.messageSource = messageSource;
-//	}
-//
-//	@ExceptionHandler(MethodArgumentNotValidException.class)
-//	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
-//	public List<Erro> tratar(MethodArgumentNotValidException ex) {
-//		List<Erro> erros = new ArrayList<>();
-//		
-//		ex.getGlobalErrors().forEach(globalError -> {
-//			erros.add(new Erro(globalError.getDefaultMessage()));
-//		});
-//		
-//		ex.getFieldErrors().forEach(fieldError -> {
-//			String campo = fieldError.getField();
-//			String mensagem = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
-//			
-//			erros.add(new Erro(campo, mensagem));
-//		});
-//		
-//		return erros;
-//	}
-//}
-
 class Erro {
 	
 	private String campo;
