@@ -4,6 +4,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import br.com.zup.orangetalents.mercadolivre.usuario.model.SenhaLimpa;
 import br.com.zup.orangetalents.mercadolivre.usuario.model.Usuario;
 
 public class UsuarioRequest {
@@ -18,6 +19,6 @@ public class UsuarioRequest {
 	}
 
 	public Usuario toModel() {
-		return new Usuario(email, senha);
+		return new Usuario(email, new SenhaLimpa(senha));
 	}
 }
