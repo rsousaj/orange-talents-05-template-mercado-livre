@@ -18,6 +18,10 @@ public class UsuarioRequest {
 		this.senha = senha;
 	}
 
+	public String getEmail() {
+		return this.email;
+	}
+	
 	public Usuario toModel() {
 		return new Usuario(email, new SenhaLimpa(senha));
 	}
