@@ -1,7 +1,6 @@
 package br.com.zup.orangetalents.mercadolivre.produto.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,25 +18,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.com.zup.orangetalents.mercadolivre.categoria.model.Categoria;
-import br.com.zup.orangetalents.mercadolivre.produto.dto.ImagensRequest;
+import br.com.zup.orangetalents.mercadolivre.produto.dto.OpiniaoRequest;
 import br.com.zup.orangetalents.mercadolivre.produto.dto.ProdutoRequest;
-import br.com.zup.orangetalents.mercadolivre.produto.model.Imagem;
 import br.com.zup.orangetalents.mercadolivre.produto.model.Produto;
-import br.com.zup.orangetalents.mercadolivre.produto.service.Storage;
 import br.com.zup.orangetalents.mercadolivre.usuario.model.Usuario;
 
 @RestController
 @RequestMapping("${mercadolivre.produto.uri}")
-public class AdicionaProdutoController {
+public class ProdutoController {
 
 	@PersistenceContext
 	private EntityManager entityManager;
 	
-	private Storage storage;
-	
-	public AdicionaProdutoController(EntityManager entityManager, Storage storage) {
+	public ProdutoController(EntityManager entityManager) {
 		this.entityManager = entityManager;
-		this.storage = storage;
 	}
 
 	@PostMapping
@@ -49,25 +43,17 @@ public class AdicionaProdutoController {
 		return ResponseEntity.ok().build();
 	}
 	
-	@PostMapping("/{id}/imagens")
+	@PostMapping("/{id}/opinioes")
 	@Transactional
-	public ResponseEntity<?> adicionaImagens(@PathVariable Long id, @Valid ImagensRequest request, @AuthenticationPrincipal Usuario usuario) {
+	public ResponseEntity<?> adicionaOpiniao(@PathVariable Long id, @RequestBody @Valid OpiniaoRequest request, @AuthenticationPrincipal Usuario usuario) {
 		Produto produto = entityManager.find(Produto.class, id);
 		
 		if (produto == null) {
-			return ResponseEntity.badRequest().body("O produto informado não existe");
+//			return ResponseEntity.badRequest().body("O produto informado não existe");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "O produto informado não existe");
 		}
-		
-		if (!produto.validaDono(usuario)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Operação não permitida.");
-		}
-		
-		List<Imagem> imagens = storage.enviarImagens(request.getImagens())
-				.stream()
-				.map(Imagem::new)
-				.collect(Collectors.toList());
-			
-		produto.setImagens(imagens);
+				
+		produto.adicionaOpiniao(request.toModel(usuario));
 		entityManager.merge(produto);
 		
 		return ResponseEntity.ok().build();

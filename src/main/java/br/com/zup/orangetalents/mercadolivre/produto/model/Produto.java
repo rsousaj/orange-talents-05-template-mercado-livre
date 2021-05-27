@@ -60,6 +60,10 @@ public class Produto {
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "produto_id")
 	private List<Imagem> imagens = new ArrayList<Imagem>();
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "produto_id")
+	private List<Opiniao> opinioes = new ArrayList<Opiniao>();
 
 	@Deprecated
 	public Produto() {}
@@ -92,6 +96,14 @@ public class Produto {
 	
 	public boolean validaDono(Usuario usuario) {
 		return donoProduto.getId().equals(usuario.getId());
+	}
+	
+	public List<Opiniao> getOpinioes() {
+		return Collections.unmodifiableList(this.opinioes);
+	}
+	
+	public void adicionaOpiniao(Opiniao opiniao) {
+		this.opinioes.add(opiniao);
 	}
 
 	@Override

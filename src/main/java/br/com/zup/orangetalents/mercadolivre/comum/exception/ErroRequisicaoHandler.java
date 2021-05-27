@@ -10,8 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -50,6 +52,11 @@ public class ErroRequisicaoHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		// TODO Auto-generated method stub
 		return new ResponseEntity<Object>(new Erro("A requisição HTTP não pode ser processada."), status);
+	}
+	
+	@ExceptionHandler(ResponseStatusException.class)
+	public ResponseEntity<Erro> handleResponseStatusException(ResponseStatusException ex) {
+		return ResponseEntity.status(ex.getStatus()).body(new Erro(ex.getReason()));
 	}
 }
 
