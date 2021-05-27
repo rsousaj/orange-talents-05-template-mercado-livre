@@ -1,7 +1,5 @@
 package br.com.zup.orangetalents.mercadolivre.produto.controller;
 
-import java.util.Optional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -49,7 +47,6 @@ public class ProdutoController {
 		Produto produto = entityManager.find(Produto.class, id);
 		
 		if (produto == null) {
-//			return ResponseEntity.badRequest().body("O produto informado não existe");
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "O produto informado não existe");
 		}
 				

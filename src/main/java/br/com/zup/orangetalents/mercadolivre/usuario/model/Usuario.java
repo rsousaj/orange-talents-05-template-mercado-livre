@@ -84,6 +84,10 @@ public class Usuario implements UserDetails {
 		return this.id;
 	}
 
+	public String getEmail() {
+		return this.email;
+	}
+	
 	@Override
 	public String getPassword() {
 		// TODO Auto-generated method stub

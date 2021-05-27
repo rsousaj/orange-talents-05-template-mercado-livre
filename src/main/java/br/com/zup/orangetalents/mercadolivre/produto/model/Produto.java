@@ -64,6 +64,10 @@ public class Produto {
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "produto_id")
 	private List<Opiniao> opinioes = new ArrayList<Opiniao>();
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "produto_id")
+	private List<Pergunta> perguntas = new ArrayList<Pergunta>();
 
 	@Deprecated
 	public Produto() {}
@@ -95,7 +99,7 @@ public class Produto {
 	}
 	
 	public boolean validaDono(Usuario usuario) {
-		return donoProduto.getId().equals(usuario.getId());
+		return donoProduto.equals(usuario);
 	}
 	
 	public List<Opiniao> getOpinioes() {
@@ -104,6 +108,14 @@ public class Produto {
 	
 	public void adicionaOpiniao(Opiniao opiniao) {
 		this.opinioes.add(opiniao);
+	}
+	
+	public void adicionaPergunta(Pergunta pergunta) {
+		this.perguntas.add(pergunta);
+	}
+	
+	public String getEmailDonoProduto() {
+		return this.donoProduto.getEmail();
 	}
 
 	@Override
