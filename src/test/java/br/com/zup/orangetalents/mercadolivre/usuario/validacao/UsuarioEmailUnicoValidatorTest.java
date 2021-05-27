@@ -1,43 +1,42 @@
 package br.com.zup.orangetalents.mercadolivre.usuario.validacao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.validation.BeanPropertyBindingResult;
 
 import br.com.zup.orangetalents.mercadolivre.usuario.dto.UsuarioRequest;
-import br.com.zup.orangetalents.mercadolivre.usuario.model.SenhaLimpa;
 import br.com.zup.orangetalents.mercadolivre.usuario.model.Usuario;
+import br.com.zup.orangetalents.mercadolivre.usuario.repository.UsuarioRepository;
 
 @DataJpaTest
 public class UsuarioEmailUnicoValidatorTest {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+	@MockBean
+	private UsuarioRepository usuarioRepository;
 	private UsuarioEmailUnicoValidator validador;
 	
 	
 	@BeforeEach
 	public void inicializa() {
-		validador = new UsuarioEmailUnicoValidator(entityManager);
+		validador = new UsuarioEmailUnicoValidator(usuarioRepository);
 	}
 	
 	@Test
-	public void deveRejeitarARequisicaoSeJaExistirUsuarioComOMesmoEmail() {
-		String mesmoEmail = "teste@teste.com";
+	public void deveriaRejeitarARequisicaoSeJaExistirUsuarioComOMesmoEmail() {
+		String emailJaCadastrado = "teste@teste.com";
+
+		when(usuarioRepository.findByEmail(any())).thenReturn(Optional.of(new Usuario()));
 		
-		Usuario usuarioCadastrado = new Usuario(mesmoEmail, new SenhaLimpa("teste"));
-		entityManager.persist(usuarioCadastrado);
-		
-		UsuarioRequest novoUsuario = new UsuarioRequest(mesmoEmail, "senha");
+		UsuarioRequest novoUsuario = new UsuarioRequest(emailJaCadastrado, "senha");
 		BeanPropertyBindingResult erros = new BeanPropertyBindingResult(novoUsuario, "teste");
 		
 		validador.validate(novoUsuario, erros);
@@ -47,7 +46,9 @@ public class UsuarioEmailUnicoValidatorTest {
 	}
 	
 	@Test
-	public void deveValidarRegistroDeUsuarioSeOEmailNaoExistir() {
+	public void deveriaValidarRegistroDeUsuarioSeOEmailNaoExistir() {
+		when(usuarioRepository.findByEmail(any())).thenReturn(Optional.empty());
+		
 		UsuarioRequest novoUsuario = new UsuarioRequest("teste@teste.com", "teste");
 		BeanPropertyBindingResult erros = new BeanPropertyBindingResult(novoUsuario, "teste");
 		

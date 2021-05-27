@@ -1,7 +1,5 @@
 package br.com.zup.orangetalents.mercadolivre.usuario.controller;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -14,17 +12,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.zup.orangetalents.mercadolivre.usuario.dto.UsuarioRequest;
+import br.com.zup.orangetalents.mercadolivre.usuario.repository.UsuarioRepository;
 import br.com.zup.orangetalents.mercadolivre.usuario.validacao.UsuarioEmailUnicoValidator;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping(value = "${mercadolivre.usuario.uri}")
 public class UsuarioController {
 	
-	@PersistenceContext
-	private EntityManager entityManager;
+	private UsuarioRepository usuarioRepository;
 	private UsuarioEmailUnicoValidator usuarioEmailUnicoValidator;
-	
-	public UsuarioController(UsuarioEmailUnicoValidator usuarioEmailUnicoValidator) {
+
+	public UsuarioController(UsuarioRepository usuarioRepository,
+			UsuarioEmailUnicoValidator usuarioEmailUnicoValidator) {
+		super();
+		this.usuarioRepository = usuarioRepository;
 		this.usuarioEmailUnicoValidator = usuarioEmailUnicoValidator;
 	}
 
@@ -36,7 +37,7 @@ public class UsuarioController {
 	@Transactional
 	@PostMapping
 	public ResponseEntity<?> cadastra(@RequestBody @Valid UsuarioRequest request) {
-		entityManager.persist(request.toModel());
+		usuarioRepository.save(request.toModel());
 		return ResponseEntity.ok().build();
 	}
 }

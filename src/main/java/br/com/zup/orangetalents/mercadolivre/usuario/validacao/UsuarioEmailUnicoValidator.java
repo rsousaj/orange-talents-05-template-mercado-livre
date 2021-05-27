@@ -1,25 +1,22 @@
 package br.com.zup.orangetalents.mercadolivre.usuario.validacao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import br.com.zup.orangetalents.mercadolivre.usuario.dto.UsuarioRequest;
+import br.com.zup.orangetalents.mercadolivre.usuario.model.Usuario;
+import br.com.zup.orangetalents.mercadolivre.usuario.repository.UsuarioRepository;
 
 @Component
 public class UsuarioEmailUnicoValidator implements Validator {
 
-	private EntityManager entityManager;
+	private UsuarioRepository usuarioRepository;
 	
-	public UsuarioEmailUnicoValidator(EntityManager entityManager) {
-		this.entityManager = entityManager;
+	public UsuarioEmailUnicoValidator(UsuarioRepository usuarioRepository) {
+		this.usuarioRepository = usuarioRepository;
 	}
 	
 	@Override
@@ -33,14 +30,10 @@ public class UsuarioEmailUnicoValidator implements Validator {
 			return;
 		}
 		
-		UsuarioRequest usuario = (UsuarioRequest) target;
-		Query query = entityManager.createQuery("SELECT 1 FROM Usuario u WHERE u.email = :email");
-		query.setParameter("email", usuario.getEmail());
+		UsuarioRequest usuarioRequest = (UsuarioRequest) target;
+		Optional<Usuario> possivelUsuario = usuarioRepository.findByEmail(usuarioRequest.getEmail());
 		
-		List<?> result = query.getResultList();
-		Assert.isTrue(result.size() <= 1, String.format("Existem %d registros com o seguinte email: %s.", result.size(), usuario.getEmail()));
-		
-		if (result.size() > 0) {
+		if (possivelUsuario.isPresent()) {
 			errors.rejectValue("email", null, "Já existe usuário cadastrado com o e-mail informado.");
 		}
 	}
