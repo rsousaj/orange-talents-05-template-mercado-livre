@@ -2,7 +2,10 @@ package br.com.zup.orangetalents.mercadolivre.produto.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -53,6 +56,10 @@ public class Produto {
 	
 	@ManyToOne
 	private @NotNull Usuario donoProduto;
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "produto_id")
+	private List<Imagem> imagens = new ArrayList<Imagem>();
 
 	@Deprecated
 	public Produto() {}
@@ -73,6 +80,18 @@ public class Produto {
 	
 	public Set<Caracteristica> getCaracteristicas() {
 		return this.caracteristicas;
+	}
+	
+	public List<Imagem> getImagens() {
+		return Collections.unmodifiableList(this.imagens);
+	}
+	
+	public void setImagens(List<Imagem> imagens) {
+		this.imagens.addAll(imagens);
+	}
+	
+	public boolean validaDono(Usuario usuario) {
+		return donoProduto.getId().equals(usuario.getId());
 	}
 
 	@Override
