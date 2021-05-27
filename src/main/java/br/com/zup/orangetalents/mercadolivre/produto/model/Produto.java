@@ -57,15 +57,15 @@ public class Produto {
 	@ManyToOne
 	private @NotNull Usuario donoProduto;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "produto_id")
 	private List<Imagem> imagens = new ArrayList<Imagem>();
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "produto_id")
 	private List<Opiniao> opinioes = new ArrayList<Opiniao>();
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "produto_id")
 	private List<Pergunta> perguntas = new ArrayList<Pergunta>();
 
