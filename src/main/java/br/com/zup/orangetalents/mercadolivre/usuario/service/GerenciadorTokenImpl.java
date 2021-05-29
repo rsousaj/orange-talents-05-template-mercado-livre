@@ -36,8 +36,12 @@ public class GerenciadorTokenImpl implements GerenciadorToken {
 
 	@Override
 	public boolean isValid(String token) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token);
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
 	}
 
 	public String getIdentificadorUsuario(String token) {
