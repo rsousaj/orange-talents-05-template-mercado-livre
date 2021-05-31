@@ -79,6 +79,10 @@ public class Usuario implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return this.perfis;
 	}
+	
+	public Long getId() {
+		return this.id;
+	}
 
 	@Override
 	public String getPassword() {

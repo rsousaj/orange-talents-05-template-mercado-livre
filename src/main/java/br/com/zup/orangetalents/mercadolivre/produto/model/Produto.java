@@ -11,9 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -22,8 +23,11 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import br.com.zup.orangetalents.mercadolivre.categoria.model.Categoria;
+import br.com.zup.orangetalents.mercadolivre.usuario.model.Usuario;
+import io.jsonwebtoken.lang.Assert;
 
 @Entity
+@Table(name = "produtos")
 public class Produto {
 
 	@Id
@@ -36,27 +40,39 @@ public class Produto {
 	private @NotBlank @Size(max = 1000) String descricao;
 	
 	@ManyToOne
+	@Valid
 	private @NotNull Categoria categoria;
 	
 	@NotEmpty 
 	@Size(min = 3)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "produto")
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "produto_id")
 	private Set<Caracteristica> caracteristicas = new HashSet<Caracteristica>();
 	
 	private LocalDateTime dataCriacao = LocalDateTime.now();
+	
+	@ManyToOne
+	private @NotNull Usuario donoProduto;
 
 	@Deprecated
 	public Produto() {}
 	
 	public Produto(@NotBlank String nome, @NotNull @Positive BigDecimal valor,
 			@NotNull @PositiveOrZero Long quantidade, @NotBlank @Size(max = 1000) String descricao,
-			@NotNull Categoria categoria, @NotEmpty @Size(min = 3) Set<Caracteristica> caracteristicas) {
+			@NotNull @Valid Categoria categoria, @NotEmpty @Size(min = 3) Set<Caracteristica> caracteristicas, @NotNull Usuario donoProduto) {
 		this.nome = nome;
 		this.valor = valor;
 		this.quantidade = quantidade;
 		this.descricao = descricao;
 		this.categoria = categoria;
-		this.caracteristicas = caracteristicas;
+		this.caracteristicas.addAll(caracteristicas);
+		this.donoProduto = donoProduto;
+		
+		Assert.isTrue(this.caracteristicas.size() >= 3, "Não é permitido o cadastramento de produto com menos de 3 características.");
+	}
+	
+	public Set<Caracteristica> getCaracteristicas() {
+		return this.caracteristicas;
 	}
 
 	@Override
