@@ -32,12 +32,7 @@ public class AdicionaProdutoController {
 	@PostMapping
 	public ResponseEntity<?> cadastra(@RequestBody @Valid ProdutoRequest request, @AuthenticationPrincipal Usuario usuario) {	
 		Produto novoProduto = request.toModel((idCategoria) -> entityManager.find(Categoria.class, idCategoria), usuario);
-		
-		
-		
 		entityManager.persist(novoProduto);
-		
-		novoProduto.getCaracteristicas().stream().forEach(System.out::println);
 		
 		return ResponseEntity.ok().build();
 	}
