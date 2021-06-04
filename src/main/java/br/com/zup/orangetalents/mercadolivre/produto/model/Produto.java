@@ -106,6 +106,10 @@ public class Produto {
 		return Collections.unmodifiableList(this.opinioes);
 	}
 	
+	public BigDecimal getValor() {
+		return this.valor;
+	}
+	
 	public void adicionaOpiniao(Opiniao opiniao) {
 		this.opinioes.add(opiniao);
 	}
@@ -116,6 +120,12 @@ public class Produto {
 	
 	public String getEmailDonoProduto() {
 		return this.donoProduto.getEmail();
+	}
+	
+	public void baixaEstoque(Long quantidade) {
+		Assert.isTrue(this.quantidade >= quantidade, "Não é permitido estoque negativo.");
+		
+		this.quantidade -= quantidade;
 	}
 
 	@Override
